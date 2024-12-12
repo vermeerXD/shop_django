@@ -21,6 +21,12 @@
             font-size: 18px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+        
+        .navbar a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+        }
 
         .navbar .menu {
             display: flex;
@@ -97,7 +103,6 @@
             background-color: #f9f9f9;
             color: #007bff;
             border-radius: 8px;
-            padding: 8px;
         }
 
         .category-list .icon {
@@ -142,7 +147,7 @@
             border-radius: 8px;
             margin-bottom: 10px;
         }
-        
+
         .product-item h3 {
             font-size: 18px;
             color: #333333;
@@ -163,7 +168,7 @@
 </head>
 <body>
     <div class="navbar">
-        <div class="logo">Online Shop</div>
+        <a href="/">Online Shop</a>
         <div class="menu">
             <a href="#">Кабінет</a>
         </div>
@@ -175,7 +180,7 @@
             <h2>Категорії</h2>
                 {% for category in categories %}
                 <li>
-                    <a href="/category/{{ category.slug }}/">{{ category.name }}</a>
+                    <a href="/{{ category.slug }}/">{{ category.name }}</a>
                 </li>
                 {% endfor %}
             </ul>
@@ -184,7 +189,7 @@
         <h2>Нещодавно зʼявились:</h2>
             <div class="product-list">
                 {% for product in products %}
-                <div class="product-item">
+                <a href="/{{ product.category.slug }}/{{ product.slug }}/" class="product-item">
                     {% if product.image %}
                         <img src="{{ product.image.url }}" alt="{{ product.name }}">
                     {% else %}
@@ -192,8 +197,8 @@
                     {% endif %}
                     <h3>{{ product.name }}</h3>
                     <p class="price">${{ product.price }}</p>
-                </div>
-                {% endfor %}
+                </a>
+            {% endfor %}
             </div>
         </div>
     </div>
