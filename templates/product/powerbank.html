@@ -3,13 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ product.name }}</title>
-    <style>
-        
-    </style>
 </head>
 <body>
-<div class="navbar">
-        <a href="/">Online Shop</a>
-</div>
+ <a href="{% url 'product_detail' category_slug=product.category.slug product_slug=product.slug %}">
+    {{ product.name }}
+</a>
 </body>
 </html>

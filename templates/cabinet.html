@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Кабінет користувача</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(43deg, rgba(0,247,255,1) 41%, rgba(0,106,255,1) 77%);
+            padding: 10px 20px;
+            color: white;
+            font-size: 18px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+        }
+
+        .navbar .menu {
+            display: flex;
+            gap: 20px;
+        }
+
+        .navbar .menu a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .navbar .menu a:hover {
+            color: #f1f1f1;
+        }
+        
+        .container {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        .sidebar {
+            width: 200px;
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin-top: 60px;
+            overflow: hidden;
+        }
+
+        .sidebar h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .sidebar button {
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .sidebar button:hover {
+            background-color: #f0f0f0;
+        }
+
+        .sidebar li {
+            margin: 10px 0; 
+        }
+
+        .sidebar a {
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .main-content {
+            flex-grow: 1;
+            margin-left: 20px;
+            background-color: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 60px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        form label {
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        form input {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        form button {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            background: none; 
+            border: none;
+            font-size: 18px;
+        }
+
+        form button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="navbar">
+        <a href="/">Online Shop</a>
+        <div class="menu">
+            <a href="{% url 'cabinet' %}">Кабінет</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <h3>Меню</h3>
+            <ul>
+                <li><a href="#">Замовлення</a></li>
+                <li><a href="#" id="profile-settings">Налаштування профілю</a></li>
+                {% if user.is_superuser %}
+                    <li><a href="#">Панель адміністратора</a></li>
+                {% endif %}
+                <li>
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" style="color: #007BFF; text-decoration: none; background: none; border: none; cursor: pointer;">
+                            Вийти
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    
+        <div class="main-content" id="profile-panel">
+            <h2>Редагувати профіль</h2>
+            <form method="post" action="{% url 'cabinet' %}">
+                {% csrf_token %}
+                <input type="text" name="first_name" placeholder="Імʼя" value="{{ request.user.first_name }}" required>
+                <input type="text" name="last_name" placeholder="Прізвище" value="{{ request.user.last_name }}" required>
+                <input type="email" name="email" placeholder="Пошта" value="{{ request.user.email }}">
+                <input type="password" name="password" placeholder="Новий пароль (якщо змінюєте)">
+                <button type="submit">Зберегти зміни</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('profile-settings').addEventListener('click', function(e) {
+            e.preventDefault();
+            const profilePanel = document.getElementById('profile-panel');
+            profilePanel.style.display = (profilePanel.style.display === 'none' || profilePanel.style.display === '') ? 'block' : 'none';
+        });
+    </script>
+</body>
+</html>
