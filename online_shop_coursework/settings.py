@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "shop",
     "product",
+    "customers",
+    "orders",
 ]
 
 MIDDLEWARE = [
@@ -115,9 +117,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Europe/Kiev"
 
 USE_I18N = True
+
+USE_L10N = True
 
 USE_TZ = True
 

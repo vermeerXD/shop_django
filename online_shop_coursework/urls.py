@@ -19,9 +19,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
+from django.contrib.auth.views import LogoutView
+from customers import views
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    path("admin/", admin.site.urls, name='admin'),
+    path('signin/', views.signin, name='signin'),
+    path('signup/', views.signup, name='signup'),
+    path('cabinet/', views.cabinet, name='cabinet'),
+    path('logout/', LogoutView.as_view(next_page='signin'), name='logout'),
     path('', include('shop.urls')),
 ]
 

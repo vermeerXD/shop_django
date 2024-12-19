@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Корзина</title>
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <link href="{% static 'css/cart.css' %}" rel="stylesheet">
+</head>
+<body>
+<div id="cartModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Корзина</h2>
+        <div id="cartItems"></div>
+        <div id="totalPrice"></div>
+        <a href="{% url 'checkout' %}" class="button">Оформити замовлення</a>
+    </div>
+</div>
+
+<script src="{% static 'scripts/cart.js' %}"></script>
+</body>
+</html>

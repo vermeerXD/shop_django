@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Оформлення замовлення</title>
+    <link href="{% static 'css/checkout.css' %}" rel="stylesheet">
+</head>
+<body>
+<h1>Checkout</h1>
+
+        {% if error %}
+        <div class="alert alert-danger">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <h3>Оформлення замовлення</h3>
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="first_name">Імʼя</label>
+                <input type="text" id="first_name" name="first_name" class="form-control" 
+                       value="{{ customer.user.first_name }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="last_name">Прізвище</label>
+                <input type="text" id="last_name" name="last_name" class="form-control" 
+                       value="{{ customer.user.last_name }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Пошта</label>
+                <input type="email" id="email" name="email" class="form-control" 
+                       value="{{ customer.user.email }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone_number">Номер телефону</label>
+                <input type="text" id="phone_number" name="phone_number" class="form-control" 
+                       value="{{ customer.phone_number|default:'' }}">
+            </div>
+
+            <div class="form-group">
+                <label for="country">Країна</label>
+                <input type="text" id="country" name="country" class="form-control" 
+                       value="{{ customer.country|default:''}}">
+            </div>
+
+            <div class="form-group">
+                <label for="city">Місто</label>
+                <input type="text" id="city" name="city" class="form-control" 
+                       value="{{ customer.city|default:''}}">
+            </div>
+
+            <div class="form-group">
+                <label for="address">Адреса</label>
+                <input type="text" id="address" name="address" class="form-control" 
+                       value="{{ customer.address|default:''}}">
+            </div>
+
+            <div class="form-group">
+                <label for="postal_code">Поштовий індекс</label>
+                <input type="text" id="postal_code" name="postal_code" class="form-control" 
+                       value="{{ customer.postal_code|default:''}}">
+            </div>
+
+            <h3>Корзина</h3>
+            <ul>
+                {% for item in cart_items %}
+                <li>{{ item.product.name }} - {{ item.quantity }} x ${{ item.product.price }} = ${{ item.product.price}}</li>
+                {% endfor %}
+            </ul>
+
+            <h3>Сума: ${{ total_price }}</h3>
+
+            <button type="submit" class="btn btn-primary">Підтвердити</button>
+        </form>
+</body>
+</html>

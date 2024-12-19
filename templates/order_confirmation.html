@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Підтвердження замовлення</title>
+    <link href="{% static 'css/order_confirmation.css' %}" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+        <h1>Підтвердження замовлення</h1>
+        
+        <h3>Дякуємо за замовлення, {{ order.customer.user.first_name }}!</h3>
+        <p>Ваше замовлення було успішно прийнято. Деталі замовлення:</p>
+
+        <ul>
+            {% for item in order.items.all %}
+            <li>{{ item.product.name }} - {{ item.quantity }} x ${{ item.product.price }} = ${{ item.product.price }}</li>
+            {% endfor %}
+        </ul>
+
+        <h3>Сума: ${{ total_price }}</h3>
+        <p>Ваше замовлення скоро буде відправлено. Ви отримаєте підтвердження на пошту.</p>
+
+        <a href="{% url 'home' %}" class="btn btn-primary">Повернутись на головну сторінку</a>
+    </div>
+</body>
+</html>
