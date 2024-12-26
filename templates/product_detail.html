@@ -5,16 +5,18 @@
     <meta charset="UTF-8">
     <title>{{ product.name }}</title>
     <link rel="stylesheet" href="{% static 'css/product_detail.css' %}">
+    <link rel="stylesheet" href="{% static 'css/review.css' %}">
     <script src="{% static 'scripts/product_detail.js' %}"></script>
+    <script src="{% static 'scripts/review.js' %}"></script>
 </head>
 <body>
  <div class="navbar">
         <a href="/">Online Shop</a>
         <div class="menu">
         {% if user.is_authenticated %}
-            <a href="#">Кабінет</a>
+            <a href="{% url 'cabinet' %}">Кабінет</a>
         {% else %}
-            <a href="#">Вхід</a>
+            <a href="{% url 'signin' %}">Вхід</a>
         {% endif %}
         <button id="cardButton" onclick="openModal()">🛒 Кошик</button>
         </div>
@@ -53,7 +55,15 @@
                         <li><strong>RAM:</strong> {{ product.smartphone.ram }} ГБ</li>
                         <li><strong>ROM:</strong> {{ product.smartphone.rom }} ГБ</li>
                         <li><strong>Батарея:</strong> {{ product.smartphone.battery_capacity }} мА·год</li>
-                        <li><strong>Екран:</strong> {{ product.smartphone.screen_size }} дюйми</li>
+                        <li><strong>Розмір екрану:</strong> {{ product.smartphone.screen_size }} дюйми</li>
+                        <li><strong>Тип дисплею:</strong>{{ product.smartphone.display_type }}</li>
+                        <li><strong>Частота дисплею:</strong> {{ product.smartphone.hz_of_display }} Гц</li>
+                        <li><strong>Камери:</strong>{{ product.smartphone.camera_specifications }}</li>
+                        <li><strong>Операційна система:</strong>{{ product.smartphone.operating_system }}</li>
+                        <li><strong>Підтримка 5G:</strong>{{ product.smartphone.supports_5g }}</li>
+                        <li><strong>Додаткові функції:</strong>{{ product.smartphone.additional_features }}</li>
+                        <li><strong>Захист від вологи:</strong>{{ product.smartphone.waterproof_rating }}</li>
+                        <li><strong>Вага (г):</strong>{{ product.smartphone.weight }} г</li>
                     </ul>
                 {% endif %}
             
@@ -74,22 +84,43 @@
                         <li><strong>Кількість USB-портів:</strong> {{ product.power_bank.usb_ports }}</li>
                     </ul>
                 {% endif %}
+            
+                {% if product.screen_protector %}
+                    <h2>Характеристи захисного скла</h2>
+                    <ul>
+                        <li><strong>Ємність батареі (мА·год):</strong> {{ product.power_bank.capacity_mAh }}</li>
+                        <li><strong>Потужність (Вт):</strong> {{ product.power_bank.output_power_w }}</li>
+                        <li><strong>Кількість USB-портів:</strong> {{ product.power_bank.usb_ports }}</li>
+                    </ul>
+                {% endif %}
             </div>      
         
             <div class="reviews">
                 <h3>Відгуки покупців</h3>
-                {% for review in product.reviews.all %}
-                    <div class="review">
-                        <h4>{{ review.author }} ★★★★★</h4>
-                        <p>{{ review.content }}</p>
-                    </div>
-                {% empty %}
-                    <p>Ще немає відгуків.</p>
+                <button id="openReviewModal" class="btn btn-primary" data-product-id="{{ product.id }}" onclick="openReviewModal(this)">Додати відгук</button>
+    
+                    <div class="review-list">
+                        {% for review in reviews %}
+                            <div class="review-panel">
+                                <div class="review-header">
+                                    <h4>{{ review.user.first_name }}</h4>
+                                    <span class="review-rating">Оцінка: {{ review.rating }} / 5</span>
+                                </div>
+                                <div class="review-body">
+                                    <p>{{ review.content }}</p>
+                                </div>
+                            <div class="review-footer">
+                                <small>Дата: {{ review.created_at|date:"d.m.Y" }}</small>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>Ще немає відгуків.</p>
                 {% endfor %}
             </div>
-        </div>
     
     
     {% include 'cart.html' %}
+    {% include 'review.html' %}
+    
 </body>
 </html>

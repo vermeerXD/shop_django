@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from orders import views as order_views
+from reviews import views as review_views
 
 urlpatterns = [
     path('', views.index, name='home'),
@@ -11,6 +12,7 @@ urlpatterns = [
     path('cart/', order_views.cart_view, name='cart'),
     path('remove-from-cart/<int:cart_id>/', order_views.remove_from_cart, name='remove_from_cart'),
     path('change-quantity/<int:cart_id>/<str:action>/', order_views.change_quantity, name='change_quantity'),
+    path('submit-review/', review_views.submit_review, name='submit_review'),
     path('', views.products_view, name='products'),
     path('', views.product_detail, name='product_detail'),
     path('add-to-cart/<int:product_id>/', order_views.add_to_cart, name='add_to_cart'),

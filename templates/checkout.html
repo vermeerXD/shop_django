@@ -7,7 +7,6 @@
     <link href="{% static 'css/checkout.css' %}" rel="stylesheet">
 </head>
 <body>
-<h1>Checkout</h1>
 
         {% if error %}
         <div class="alert alert-danger">
@@ -68,11 +67,20 @@
             </div>
 
             <h3>Корзина</h3>
-            <ul>
-                {% for item in cart_items %}
-                <li>{{ item.product.name }} - {{ item.quantity }} x ${{ item.product.price }} = ${{ item.product.price}}</li>
-                {% endfor %}
-            </ul>
+            <div class="cart-container">
+                <ul class="cart-items">
+                    {% for item in cart_items %}
+                        <li class="cart-item">
+                        <div class="cart-item-details">
+                            <img src="{{ product.image }}" alt="{{ item.product.name }}" class="cart-item-image">
+                            <span class="product-name">{{ item.product.name }}</span>
+                            <span class="quantity">{{ item.quantity }} x </span>
+                            <span class="price">${{ item.product.price }}</span>
+                        </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
 
             <h3>Сума: ${{ total_price }}</h3>
 

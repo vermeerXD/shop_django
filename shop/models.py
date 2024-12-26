@@ -17,6 +17,12 @@ class Category(models.Model):
         verbose_name_plural = "Категорії"
         ordering = ['name']
 
+    def get_filters(self):
+        if self.name.lower() == "смартфони":
+            return [
+                {"name"}
+            ]
+
     def __str__(self):
         return self.name
 
@@ -46,6 +52,10 @@ class Product(models.Model):
         verbose_name = "Продукт"
         verbose_name_plural = "Продукти"
         ordering = ["name"]
+
+    @property
+    def reviews(self):
+        return self.reviews_set.all()
 
     def __str__(self):
         return self.name
