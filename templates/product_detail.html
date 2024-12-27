@@ -56,14 +56,15 @@
                         <li><strong>ROM:</strong> {{ product.smartphone.rom }} ГБ</li>
                         <li><strong>Батарея:</strong> {{ product.smartphone.battery_capacity }} мА·год</li>
                         <li><strong>Розмір екрану:</strong> {{ product.smartphone.screen_size }} дюйми</li>
-                        <li><strong>Тип дисплею:</strong>{{ product.smartphone.display_type }}</li>
+                        <li><strong>Тип дисплею:</strong> {{ product.smartphone.display_type }}</li>
                         <li><strong>Частота дисплею:</strong> {{ product.smartphone.hz_of_display }} Гц</li>
-                        <li><strong>Камери:</strong>{{ product.smartphone.camera_specifications }}</li>
-                        <li><strong>Операційна система:</strong>{{ product.smartphone.operating_system }}</li>
-                        <li><strong>Підтримка 5G:</strong>{{ product.smartphone.supports_5g }}</li>
-                        <li><strong>Додаткові функції:</strong>{{ product.smartphone.additional_features }}</li>
-                        <li><strong>Захист від вологи:</strong>{{ product.smartphone.waterproof_rating }}</li>
-                        <li><strong>Вага (г):</strong>{{ product.smartphone.weight }} г</li>
+                        <li><strong>Камери:</strong> {{ product.smartphone.camera_specifications }}</li>
+                        <li><strong>Операційна система:</strong> {{ product.smartphone.operating_system }}</li>
+                        <li><strong>Підтримка 5G:</strong> {{ product.smartphone.supports_5g }}</li>
+                        <li><strong>Додаткові функції:</strong> {{ product.smartphone.additional_features }}</li>
+                        <li><strong>Захист від вологи:</strong> {{ product.smartphone.waterproof_rating }}</li>
+                        <li><strong>Вага (г):</strong> {{ product.smartphone.weight }} г</li>
+                        <li><strong>Бренд:</strong> {{ product.smartphone.brand }} </li>
                     </ul>
                 {% endif %}
             
@@ -97,8 +98,11 @@
         
             <div class="reviews">
                 <h3>Відгуки покупців</h3>
+                {% if user.is_authenticated %}
                 <button id="openReviewModal" class="btn btn-primary" data-product-id="{{ product.id }}" onclick="openReviewModal(this)">Додати відгук</button>
-    
+                {% else %}
+                <p><a href="{% url 'signin' %}">Увійдіть</a>, щоб залишити відгук.</p>
+                {% endif %}
                     <div class="review-list">
                         {% for review in reviews %}
                             <div class="review-panel">

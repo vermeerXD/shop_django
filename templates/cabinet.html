@@ -20,8 +20,14 @@
         <ul>
             <li><a href="#" id="orders">Замовлення</a></li>
             <li><a href="#" id="profile-settings">Налаштування профілю</a></li>
+            <li><a href="#" id="user-statistics">Ваша статистика</a></li>
+        
             {% if user.is_superuser %}
                 <li><a href="/admin/">Панель адміністратора</a></li>
+            {% endif %}
+        
+            {% if user.is_staff %}
+                <li><a href="#" id="total-statistics">Вся статистика (для робітників)</a></li>
             {% endif %}
             <li>
                 <form method="post" action="{% url 'logout' %}">
@@ -36,13 +42,20 @@
 
     <div class="main-content" id="profile-panel">
         <h2>Редагувати профіль</h2>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
         <form method="post" action="{% url 'cabinet' %}">
             {% csrf_token %}
             <input type="text" name="first_name" placeholder="Імʼя" value="{{ request.user.first_name }}" required>
             <input type="text" name="last_name" placeholder="Прізвище" value="{{ request.user.last_name }}" required>
             <input type="email" name="email" placeholder="Пошта" value="{{ request.user.email }}">
             <input type="password" name="password" placeholder="Новий пароль (якщо змінюєте)">
-            <button type="submit">Зберегти зміни</button>
+            <button type="submit" class="button-change">Зберегти зміни</button>
         </form>
     </div>
 
@@ -50,8 +63,29 @@
     <h2>Мої замовлення</h2>
     <div id="orders-container"></div>
     </div>
+
+    <div class="main-content" id="user-statistics-panel" style="display: none;">
+    <h2>Ваша статистика</h2>
+    <ul>
+        <li id="user-total-orders">Всі замовлення: </li>
+        <li id="user-total-spent">Загальні витрати: </li>
+        <li id="user-total-items">Кількість замовлених товарів: </li>
+    </ul>
 </div>
 
+    <div class="main-content" id="total-statistics-panel" style="display: none;">
+    <h2>Вся статистика</h2>
+    <ul>
+        <li id="total-orders">Всі замовлення: </li>
+        <li id="total-revenue">Дохід:</li>
+        <li id="total-items">Кількість замовлених товарів:</li>
+    </ul>
+</div>
+</div>
+
+    <script>
+        const userIsStaff = {{ is_staff|yesno:"true,false" }};
+    </script>
 
     <script src="{% static 'scripts/cabinet.js' %}"> </script>
 </body>

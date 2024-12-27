@@ -6,6 +6,8 @@ from .models import Cart, Order, OrderItem
 from customers.models import Customer
 from django.db import transaction
 from django.utils.timezone import localtime
+from django.db import connection
+from django.views.decorators.http import require_GET
 
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -197,31 +199,66 @@ def cabinet(request):
 
     return render(request, 'cabinet.html', {'orders': orders})
 
+@login_required
 def orders_api(request):
-    try:
-        customer = Customer.objects.get(user=request.user)
-    except Customer.DoesNotExist:
-        customer = None
+    customer, created = Customer.objects.get_or_create(user=request.user)
 
-    if customer:
-        orders = Order.objects.filter(customer=customer)
-        orders_data = [
-            {
-                'id': order.id,
-                'status': order.status,
-                'created_at': localtime(order.created_at).strftime('%d %B %Y, %H:%M'),
-                'total_price': str(order.total_price),
-                'items': [
-                    {
-                        'product_name': item.product.name,
-                        'quantity': item.quantity,
-                        'total_price': str(item.total_price),
-                    }
-                    for item in order.items.all()
-                ]
-            }
-            for order in orders
-        ]
-        return JsonResponse({'orders': orders_data})
-    else:
-        return JsonResponse({'orders': []})
+    orders = Order.objects.filter(customer=customer)
+    orders_data = [
+        {
+            'id': order.id,
+            'status': order.status,
+            'created_at': localtime(order.created_at).strftime('%d %B %Y, %H:%M'),
+            'total_price': str(order.total_price),
+            'items': [
+                {
+                    'product_name': item.product.name,
+                    'quantity': item.quantity,
+                    'total_price': str(item.total_price),
+                }
+                for item in order.items.all()
+            ]
+        }
+        for order in orders
+    ]
+    return JsonResponse({'orders': orders_data})
+
+@login_required
+@require_GET
+def get_customer_statistics(request):
+    customer = Customer.objects.get(user=request.user)
+    cust_id = customer.id
+
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT * FROM get_customer_statistics(%s);
+        """, [cust_id])
+        result = cursor.fetchone()
+        if result:
+            total_orders, total_spent, total_items = result
+        else:
+            total_orders, total_spent, total_items = 0, 0, 0
+
+    return JsonResponse({
+        "total_orders": total_orders,
+        "total_spent": total_spent,
+        "total_items": total_items,
+    })
+
+@require_GET
+def get_total_statistics(request):
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT * FROM get_total_statistics();
+        """)
+        result = cursor.fetchone()
+        if result:
+            total_orders, total_revenue, total_items = result
+        else:
+            total_orders, total_revenue, total_items = 0, 0, 0
+
+    return JsonResponse({
+        "total_orders": total_orders,
+        "total_revenue": total_revenue,
+        "total_items": total_items,
+    })

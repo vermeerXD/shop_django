@@ -14,7 +14,11 @@
         <h2>Корзина</h2>
         <div id="cartItems"></div>
         <div id="totalPrice"></div>
-        <a href="{% url 'checkout' %}" class="button">Оформити замовлення</a>
+        {% if user.is_authenticated %}
+                <a href="{% url 'checkout' %}" class="button">Оформити замовлення</a>
+            {% else %}
+            <p><a href="{% url 'signin' %}">Увійдіть,</a> щоб оформити замовлення</p>
+        {% endif %}
     </div>
 </div>
 

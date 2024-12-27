@@ -30,7 +30,7 @@
                         <div class="cart-item-details">
                             <strong>${item.product.name}</strong><br>
                             ${item.quantity} x $${item.product.price} = $${item.total}<br>
-                            <span>Stock: ${item.stock}</span>
+                            <span>Кількість на складі: ${item.stock}</span>
                         </div>
                         <div class="cart-item-actions">
                             <button class="remove-btn" data-item-id="${item.id}">Видалити</button>

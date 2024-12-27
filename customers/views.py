@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 from .forms import SignupForm, SigninForm, ProfileForm, CustomerForm
+from orders.models import Order
+from customers.models import Customer
 
 # Create your views here.
 def signup(request):
@@ -62,11 +64,13 @@ def cabinet(request):
         first_name = request.POST.get("first_name")
         last_name = request.POST.get("last_name")
         email = request.POST.get("email")
+        username = request.POST.get("username")
         password = request.POST.get("password")
 
         user.first_name = first_name
         user.last_name = last_name
         user.email = email
+        user.username = email
         if password:
             user.set_password(password)
         user.save()
@@ -74,4 +78,6 @@ def cabinet(request):
         messages.success(request, "Дані успішно оновлено!")
         return redirect("cabinet")
 
-    return render(request, "cabinet.html")
+    return render(request, "cabinet.html",{
+        'is_staff': request.user.is_staff
+    })

@@ -13,6 +13,18 @@ class Smartphone(models.Model):
     rom = models.PositiveIntegerField(verbose_name="Вбудована пам'ять (ROM) в ГБ")
     battery_capacity = models.PositiveIntegerField(verbose_name="Ємність батареї (мА·год)")
     screen_size = models.FloatField(verbose_name="Розмір екрану (дюйми)")
+    hz_of_display = models.PositiveIntegerField(verbose_name="Частота диcплею", null=True, blank=True)
+    camera_specifications = models.CharField(max_length=255, verbose_name="Характеристики камер",
+                                             help_text="Наприклад: 108МП + 12МП + 5МП", null=True)
+    operating_system = models.CharField(max_length=100, verbose_name="Операційна система", null=True, blank=True)
+    display_type = models.CharField(max_length=100, verbose_name="Тип дисплея", help_text="Наприклад: AMOLED, IPS, LCD", null=True)
+    supports_5g = models.BooleanField(default=False, verbose_name="Підтримка 5G")
+    waterproof_rating = models.CharField(max_length=50, null=True, blank=True,
+                                         verbose_name="Клас захисту (водостійкість)", help_text="Наприклад: IP68")
+    weight = models.FloatField(null=True, blank=True, verbose_name="Вага (грам)")
+    additional_features = models.TextField(null=True, blank=True, verbose_name="Додаткові функції",
+                                           help_text="Наприклад: підтримка стилуса, безпровідна зарядка")
+    brand = models.TextField(null=True, blank=True, verbose_name="Бренд")
 
     def clean(self):
         if self.product.category.id != 5:
@@ -68,8 +80,10 @@ class PowerBank(models.Model):
     product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name='power_bank')
 
     capacity_mAh = models.PositiveIntegerField(verbose_name="Ємність батареї (мА·год)")
+    type = models.TextField(verbose_name="Тип батареї", null=True)
     output_power_w = models.PositiveIntegerField(verbose_name="Потужність (Вт)")
     usb_ports = models.PositiveIntegerField(verbose_name="Кількість USB портів")
+    supports_wireless_charging = models.BooleanField(default=False, verbose_name="Підтримка бездротової зарядки")
 
     def clean(self):
         if self.product.category.id != 4:
@@ -88,7 +102,8 @@ class CableAndAdapter(models.Model):
 
     cable_type = models.CharField(max_length=50, verbose_name="Тип кабелю")
     length_cm = models.PositiveIntegerField(verbose_name="Довжина кабелю (см)")
-    max_speed_gbps = models.FloatField(verbose_name="Максимальна швидкість (Gbps)")
+    connector_1 = models.TextField(verbose_name="Розʼєм 1", null=True)
+    connector_2 = models.TextField(verbose_name="Розʼєм 2", null=True)
 
     def clean(self):
         if self.product.category.id != 6:

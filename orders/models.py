@@ -8,11 +8,14 @@ class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    status = models.CharField(max_length=20, choices=[
-        ('Pending', 'Очікується'),
-        ('Completed', 'Завершено'),
-        ('Cancelled', 'Скасовано')
-    ], default='Pending')
+    status = models.CharField(max_length=100, choices=[
+        ('Очікується', 'Очікується'),
+        ('Підтверджено', 'Підтверджено'),
+        ('Відправлено в службу доставки', 'Відправлено в службу доставки'),
+        ('Доставляється', 'Доставляється'),
+        ('Завершено', 'Завершено'),
+        ('Скасовано', 'Скасовано')
+    ], default='Очікується')
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def update_total_price(self):
