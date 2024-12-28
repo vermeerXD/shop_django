@@ -184,3 +184,16 @@ form button:hover {
     margin-top: 0;
     margin-bottom: 0;
 }
+
+.cancel-order {
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cancel-order:hover {
+    background-color: #d9363e;
+}

@@ -16,6 +16,10 @@ body {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.cabinet {
+    margin-top: 1px;
+}
+
 .navbar a {
     text-decoration: none;
     color: white;

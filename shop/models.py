@@ -28,6 +28,7 @@ class Category(models.Model):
 
 def product_image_path(instance, filename):
     return os.path.join('products', filename)
+
 class Product(models.Model):
     """
     Model for products
@@ -56,6 +57,11 @@ class Product(models.Model):
     @property
     def reviews(self):
         return self.reviews_set.all()
+
+    def save(self, *args, **kwargs):
+        if self.stock == 0:
+            self.available = False
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name

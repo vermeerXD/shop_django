@@ -17,14 +17,15 @@ class Smartphone(models.Model):
     camera_specifications = models.CharField(max_length=255, verbose_name="Характеристики камер",
                                              help_text="Наприклад: 108МП + 12МП + 5МП", null=True)
     operating_system = models.CharField(max_length=100, verbose_name="Операційна система", null=True, blank=True)
-    display_type = models.CharField(max_length=100, verbose_name="Тип дисплея", help_text="Наприклад: AMOLED, IPS, LCD", null=True)
+    display_type = models.CharField(max_length=100, verbose_name="Тип дисплея", help_text="Наприклад: AMOLED, IPS, LCD",
+                                    null=True)
     supports_5g = models.BooleanField(default=False, verbose_name="Підтримка 5G")
     waterproof_rating = models.CharField(max_length=50, null=True, blank=True,
                                          verbose_name="Клас захисту (водостійкість)", help_text="Наприклад: IP68")
     weight = models.FloatField(null=True, blank=True, verbose_name="Вага (грам)")
     additional_features = models.TextField(null=True, blank=True, verbose_name="Додаткові функції",
                                            help_text="Наприклад: підтримка стилуса, безпровідна зарядка")
-    brand = models.TextField(null=True, blank=True, verbose_name="Бренд")
+    brand = models.CharField(null=True, blank=True, verbose_name="Бренд", max_length=50)
 
     def clean(self):
         if self.product.category.id != 5:
@@ -44,6 +45,7 @@ class Case(models.Model):
     material = models.CharField(max_length=100, verbose_name="Матеріал")
     compatible_models = models.TextField(verbose_name="Сумісні моделі")
     color = models.CharField(max_length=50, verbose_name="Колір")
+    brand = models.CharField(max_length=50, verbose_name="Бренд", null=True, blank=True)
 
     def clean(self):
         if self.product.category.id != 2:
@@ -63,6 +65,7 @@ class ScreenProtector(models.Model):
     hardness_rating = models.CharField(max_length=20, verbose_name="Рейтинг твердості")
     anti_glare = models.BooleanField(default=False, verbose_name="Антиблікове покриття")
     compatible_models = models.TextField(verbose_name="Сумісні моделі")
+    brand = models.CharField(max_length=50, verbose_name="Бренд", null=True, blank=True)
 
     def clean(self):
         if self.product.category.id != 3:
@@ -84,6 +87,7 @@ class PowerBank(models.Model):
     output_power_w = models.PositiveIntegerField(verbose_name="Потужність (Вт)")
     usb_ports = models.PositiveIntegerField(verbose_name="Кількість USB портів")
     supports_wireless_charging = models.BooleanField(default=False, verbose_name="Підтримка бездротової зарядки")
+    brand = models.CharField(max_length=50, verbose_name="Бренд", null=True, blank=True)
 
     def clean(self):
         if self.product.category.id != 4:
@@ -104,6 +108,7 @@ class CableAndAdapter(models.Model):
     length_cm = models.PositiveIntegerField(verbose_name="Довжина кабелю (см)")
     connector_1 = models.TextField(verbose_name="Розʼєм 1", null=True)
     connector_2 = models.TextField(verbose_name="Розʼєм 2", null=True)
+    brand = models.CharField(max_length=50, verbose_name="Бренд", null=True, blank=True)
 
     def clean(self):
         if self.product.category.id != 6:
@@ -123,6 +128,7 @@ class Charger(models.Model):
     output_power_w = models.PositiveIntegerField(verbose_name="Потужність (Вт)")
     ports = models.PositiveIntegerField(verbose_name="Кількість портів")
     fast_charge = models.BooleanField(default=False, verbose_name="Швидка зарядка")
+    brand = models.CharField(max_length=50, verbose_name="Бренд", null=True, blank=True)
 
     def clean(self):
         if self.product.category.id != 7:

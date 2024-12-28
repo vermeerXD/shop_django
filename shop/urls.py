@@ -7,6 +7,7 @@ urlpatterns = [
     path('', views.index, name='home'),
     path('cabinet/', order_views.cabinet, name='cabinet'),
     path('orders/', order_views.orders_api, name='orders_api'),
+    path('cancel_order/<int:order_id>/', order_views.cancel_order, name='cancel_order'),
     path('get_customer_statistics/', order_views.get_customer_statistics, name='get_customer_statistics'),
     path('get_total_statistics/', order_views.get_total_statistics, name='get_total_statistics'),
     path('checkout/', order_views.checkout, name='checkout'),
@@ -18,6 +19,7 @@ urlpatterns = [
     path('', views.products_view, name='products'),
     path('', views.product_detail, name='product_detail'),
     path('add-to-cart/<int:product_id>/', order_views.add_to_cart, name='add_to_cart'),
+    path('products/sort/<str:category_slug>/', views.sort_products, name='sort_products'),
     path('<slug:category_slug>/', views.category_view, name='category_detail'),
     path('<slug:category_slug>/<slug:product_slug>/', views.product_detail, name='product_detail'),
 ]

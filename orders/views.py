@@ -7,7 +7,7 @@ from customers.models import Customer
 from django.db import transaction
 from django.utils.timezone import localtime
 from django.db import connection
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_GET, require_POST
 
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -86,7 +86,7 @@ def remove_from_cart(request, cart_id):
         cart_item = get_object_or_404(Cart, id=cart_id)
         cart_item.delete()
 
-        return JsonResponse({'message': 'Item removed successfully', 'success': True})
+        return JsonResponse({'message': 'Товар успішно видалено.', 'success': True})
     return JsonResponse({'message': 'Invalid request', 'success': False}, status=400)
 
 
@@ -96,14 +96,14 @@ def change_quantity(request, cart_id, action):
 
         if action == 'increase':
             if cart_item.quantity + 1 > cart_item.product.stock:
-                return JsonResponse({'message': 'Not enough stock', 'success': False}, status=400)
+                return JsonResponse({'message': 'Недостатньо товару на складі', 'success': False}, status=400)
             cart_item.quantity += 1
         elif action == 'decrease' and cart_item.quantity > 1:
             cart_item.quantity -= 1
 
         cart_item.save()
         return JsonResponse({
-            'message': 'Quantity updated successfully',
+            'message': 'Кількість успішно оновлена.',
             'success': True,
             'new_quantity': cart_item.quantity
         })
@@ -203,7 +203,7 @@ def cabinet(request):
 def orders_api(request):
     customer, created = Customer.objects.get_or_create(user=request.user)
 
-    orders = Order.objects.filter(customer=customer)
+    orders = Order.objects.filter(customer=customer).order_by('-created_at')
     orders_data = [
         {
             'id': order.id,
@@ -222,6 +222,20 @@ def orders_api(request):
         for order in orders
     ]
     return JsonResponse({'orders': orders_data})
+
+@login_required
+@require_POST
+def cancel_order(request, order_id):
+    try:
+        order = Order.objects.get(id=order_id, customer__user=request.user)
+        if order.status not in ['Завершено', 'Скасовано']:
+            order.status = 'Скасовано'
+            order.save()
+            return JsonResponse({'success': True, 'message': 'Замовлення скасовано.'})
+        else:
+            return JsonResponse({'success': False, 'message': 'Це замовлення не можна скасувати.'}, status=400)
+    except Order.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Замовлення не знайдено.'}, status=404)
 
 @login_required
 @require_GET

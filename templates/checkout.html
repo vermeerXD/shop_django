@@ -7,6 +7,17 @@
     <link href="{% static 'css/checkout.css' %}" rel="stylesheet">
 </head>
 <body>
+<div class="navbar">
+        <a class="main-page" href="/">Online Shop</a>
+        <div class="menu">
+        {% if user.is_authenticated %}
+            <a class="cabinet" href="{% url 'cabinet' %}">Кабінет</a>
+        {% else %}
+            <a class="cabinet" href="{% url 'signin' %}">Вхід</a>
+        {% endif %}
+        <button id="cardButton" onclick="openModal()">🛒 Кошик</button>
+        </div>
+    </div>
 
         {% if error %}
         <div class="alert alert-danger">

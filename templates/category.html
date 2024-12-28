@@ -6,19 +6,39 @@
     <title>{{ category.name }}</title>
     <link rel="stylesheet" href="{% static 'css/category.css' %}">
 </head>
-<body>
+<body data-category-slug="{{ category.slug }}">
  <div class="navbar">
         <a href="/">Online Shop</a>
         <div class="menu">
         {% if user.is_authenticated %}
-            <a href="#">Кабінет</a>
+            <a class="cabinet" href="{% url 'cabinet' %}">Кабінет</a>
         {% else %}
-            <a href="#">Вхід</a>
+            <a href="{% url 'signin' %}">Вхід</a>
         {% endif %}
         <button id="cardButton" onclick="openModal()">🛒 Кошик</button>
         </div>
  </div>
     <div class="logo">{{ category.name }}</div>
+ 
+     <div class="filters">
+    <select id="brandFilter" onchange="applySorting()">
+        <option value="">Всі бренди</option>
+        {% for brand in brands %}
+        <option value="{{ brand }}" {% if request.GET.brand == brand %}selected{% endif %}>
+            {{ brand }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <select id="sortBy" onchange="applySorting()">
+        <option value="price-asc">Ціна: за зростанням</option>
+        <option value="price-desc">Ціна: за спаданням</option>
+        <option value="reviews-asc">Відгуки: за зростанням</option>
+        <option value="reviews-desc">Відгуки: за спаданням</option>
+    </select>
+     
+</div>
+ 
     <div class="container">
         <div class="product-list" id="product-list">
             {% for product in products %}
@@ -38,6 +58,7 @@
     </div>
 
 {% include 'cart.html' %}
+ <script src="{% static 'scripts/category.js' %}"></script>
 <script>
 </script>
 </body>

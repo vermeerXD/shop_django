@@ -11,7 +11,7 @@
         <a href="/">Online Shop</a>
         <div class="menu">
         {% if user.is_authenticated %}
-            <a href="{% url 'cabinet' %}">Кабінет</a>
+            <a class="cabinet" href="{% url 'cabinet' %}">Кабінет</a>
         {% else %}
             <a href="{% url 'signin' %}">Вхід</a>
         {% endif %}

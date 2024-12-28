@@ -14,7 +14,7 @@
         <a href="/">Online Shop</a>
         <div class="menu">
         {% if user.is_authenticated %}
-            <a href="{% url 'cabinet' %}">Кабінет</a>
+            <a class="cabinet" href="{% url 'cabinet' %}">Кабінет</a>
         {% else %}
             <a href="{% url 'signin' %}">Вхід</a>
         {% endif %}
@@ -60,7 +60,13 @@
                         <li><strong>Частота дисплею:</strong> {{ product.smartphone.hz_of_display }} Гц</li>
                         <li><strong>Камери:</strong> {{ product.smartphone.camera_specifications }}</li>
                         <li><strong>Операційна система:</strong> {{ product.smartphone.operating_system }}</li>
-                        <li><strong>Підтримка 5G:</strong> {{ product.smartphone.supports_5g }}</li>
+                        <li><strong>Підтримка 5G:</strong> 
+                            {% if product.smartphone.supports_5g %}
+                                Є
+                            {% else %}
+                                Немає
+                            {% endif %}    
+                        </li>
                         <li><strong>Додаткові функції:</strong> {{ product.smartphone.additional_features }}</li>
                         <li><strong>Захист від вологи:</strong> {{ product.smartphone.waterproof_rating }}</li>
                         <li><strong>Вага (г):</strong> {{ product.smartphone.weight }} г</li>
@@ -74,6 +80,7 @@
                         <li><strong>Матеріал:</strong> {{ product.case.material }}</li>
                         <li><strong>Колір:</strong> {{ product.case.color }}</li>
                         <li><strong>Сумісні моделі:</strong> {{ product.case.compatible_models }}</li>
+                        <li><strong>Бренд:</strong> {{ product.case.brand }} </li>
                     </ul>
                 {% endif %}
             
@@ -83,6 +90,7 @@
                         <li><strong>Ємність батареі (мА·год):</strong> {{ product.power_bank.capacity_mAh }}</li>
                         <li><strong>Потужність (Вт):</strong> {{ product.power_bank.output_power_w }}</li>
                         <li><strong>Кількість USB-портів:</strong> {{ product.power_bank.usb_ports }}</li>
+                        <li><strong>Бренд:</strong> {{ product.power_bank.brand }} </li>
                     </ul>
                 {% endif %}
             
@@ -92,7 +100,29 @@
                         <li><strong>Ємність батареі (мА·год):</strong> {{ product.power_bank.capacity_mAh }}</li>
                         <li><strong>Потужність (Вт):</strong> {{ product.power_bank.output_power_w }}</li>
                         <li><strong>Кількість USB-портів:</strong> {{ product.power_bank.usb_ports }}</li>
+                        <li><strong>Бренд:</strong> {{ product.screen_protector.brand }} </li>
                     </ul>
+                {% endif %}
+                
+                {% if product.charger %}
+                    <h2>Характеристики зарядного пристрою</h2>
+                    <ul>
+                        <li><strong>Потужність (Вт):</strong> {{ product.charger.output_power_w }}</li>
+                        <li><strong>Кількість портів:</strong> {{ product.charger.ports }}</li>
+                        <li><strong>Швидка зарядка:</strong> {{ product.charger.fast_charge }}</li>
+                        <li><strong>Бренд:</strong> {{ product.charger.brand }} </li>
+                    </ul>    
+                {% endif %}
+            
+                {% if product.cable_adapter %}
+                    <h2>Характеристики кабелю</h2>
+                    <ul>
+                        <li><strong>Тип кабелю:</strong> {{ product.cable_adapter.cable_type }}</li>
+                        <li><strong>Довжина кабелю (см):</strong> {{ product.cable_adapter.length_cm }} см</li>
+                        <li><strong>Розʼєм 1:</strong> {{ product.cable_adapter.connector_1 }}</li>
+                        <li><strong>Розʼєм 2:</strong> {{ product.cable_adapter.connector_2 }}</li>
+                        <li><strong>Бренд:</strong> {{ product.cable_adapter.brand }} </li>
+                    </ul>    
                 {% endif %}
             </div>      
         

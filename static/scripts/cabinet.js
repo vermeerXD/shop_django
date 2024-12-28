@@ -35,32 +35,65 @@ document.addEventListener('DOMContentLoaded', function () {
     showPanel('profile-panel');
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-        fetch('/orders/')
-            .then(response => response.json())
-            .then(data => {
-                const ordersContainer = document.getElementById('orders-container');
-                if (data.orders.length > 0) {
-                    data.orders.forEach(order => {
-                        const orderDiv = document.createElement('div');
-                        orderDiv.classList.add('order-panel');
-                        orderDiv.innerHTML = `
-                            <h3>Замовлення №${order.id} - Статус: ${order.status}</h3>
-                            <p>Дата створення: ${ order.created_at }</p>
-                            <ul>
-                                ${order.items.map(item => `
-                                    <li>${item.product_name} - ${item.quantity} x $${item.total_price}</li>
-                                `).join('')}
-                            </ul>
-                            <h4>Загальна сума: $${order.total_price}</h4>
-                        `;
-                        ordersContainer.appendChild(orderDiv);
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('/orders/')
+        .then(response => response.json())
+        .then(data => {
+            const ordersContainer = document.getElementById('orders-container');
+            if (data.orders.length > 0) {
+                data.orders.forEach(order => {
+                    const orderDiv = document.createElement('div');
+                    orderDiv.classList.add('order-panel');
+                    orderDiv.innerHTML = `
+                        <h3>Замовлення №${order.id} - Статус: ${order.status}</h3>
+                        <p>Дата створення: ${order.created_at}</p>
+                        <ul>
+                            ${order.items.map(item => `
+                                <li>${item.product_name} - ${item.quantity} x $${item.total_price}</li>
+                            `).join('')}
+                        </ul>
+                        <h4>Загальна сума: $${order.total_price}</h4>
+                        ${order.status !== 'Скасовано' && order.status !== 'Завершено' ? `
+                            <button class="cancel-order" data-order-id="${order.id}">Скасувати</button>
+                        ` : ''}
+                    `;
+                    ordersContainer.appendChild(orderDiv);
+                });
+
+                document.querySelectorAll('.cancel-order').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const orderId = this.dataset.orderId;
+                        fetch(`/cancel_order/${orderId}/`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': getCSRFToken(),
+                            },
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert(data.message);
+                                    location.reload();
+                                } else {
+                                    alert(data.message);
+                                }
+                            });
                     });
-                } else {
-                    ordersContainer.innerHTML = '<p>У вас поки що немає замовлень.</p>';
-                }
-            });
+                });
+            } else {
+                ordersContainer.innerHTML = '<p>У вас поки що немає замовлень.</p>';
+            }
+        });
 });
+
+function getCSRFToken() {
+    const cookies = document.cookie.split('; ');
+    for (const cookie of cookies) {
+        const [name, value] = cookie.split('=');
+        if (name === 'csrftoken') return value;
+    }
+    return '';
+}
 
 document.addEventListener("DOMContentLoaded", function () {
 

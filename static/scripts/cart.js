@@ -47,7 +47,7 @@
 
             initCartButtons();
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => console.error('Помилка:', error));
     }
 
     function initCartButtons() {
@@ -90,7 +90,7 @@
                 alert('Error: ' + data.message);
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => console.error('Помилка:', error));
     }
 
     function changeQuantity(cartItemId, action) {
@@ -113,8 +113,8 @@
                 alert(data.message);
                 openModal();
             } else {
-                alert('Error: ' + data.message);
+                alert('Помилка: ' + data.message);
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => console.error('Помилка:', error));
     }
