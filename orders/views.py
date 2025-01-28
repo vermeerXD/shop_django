@@ -10,45 +10,51 @@ from django.db import connection
 from django.views.decorators.http import require_GET, require_POST
 
 def add_to_cart(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+    try:
+        product = get_object_or_404(Product, id=product_id)
 
-    if product.stock <= 0:
-        return JsonResponse({"success": False, "message": "Товару немає на складі."}, status=400)
+        if product.stock <= 0:
+            return JsonResponse({"success": False, "message": "Товару немає на складі."}, status=400)
 
-    session_key = request.session.session_key
-    if not session_key:
-        request.session.create()
+        session_key = request.session.session_key
+        if not session_key:
+            request.session.create()
 
-    cart_item, created = Cart.objects.get_or_create(
-        product=product,
-        session_key=session_key,
-        user=request.user if request.user.is_authenticated else None,
-        defaults={'quantity': 1}
-    )
+        cart_item, created = Cart.objects.get_or_create(
+            product=product,
+            session_key=session_key,
+            user=request.user if request.user.is_authenticated else None,
+            defaults={'quantity': 1}
+        )
 
-    if not created:
-        if cart_item.quantity + 1 > product.stock:
-            return JsonResponse({"success": False, "message": "Недостатньо товару на складі."}, status=400)
-        cart_item.quantity += 1
-        cart_item.save()
+        if not created:
+            if cart_item.quantity + 1 > product.stock:
+                return JsonResponse({"success": False, "message": "Недостатньо товару на складі."}, status=400)
+            cart_item.quantity += 1
+            cart_item.save()
 
-    cart_items = Cart.objects.filter(session_key=request.session.session_key)
-    total_price = sum(item.product.price * item.quantity for item in cart_items)
-    return JsonResponse({
-        "success": True,
-        "message": "Товар успішно додано в кошик.",
-        "cart_items": [
-            {
-                "id": item.id,
-                "product_name": item.product.name,
-                "quantity": item.quantity,
-                "total_price": item.product.price * item.quantity,
-                "product_image_url": item.product.image.url if item.product.image else None
-            }
-            for item in cart_items
-        ],
-        "total_price": total_price
-    })
+        cart_items = Cart.objects.filter(session_key=request.session.session_key)
+        total_price = sum(item.product.price * item.quantity for item in cart_items)
+        return JsonResponse({
+            "success": True,
+            "message": "Товар успішно додано в кошик.",
+            "cart_items": [
+                {
+                    "id": item.id,
+                    "product_name": item.product.name,
+                    "quantity": item.quantity,
+                    "total_price": item.product.price * item.quantity,
+                    "product_image_url": item.product.image.url if item.product.image else None
+                }
+                for item in cart_items
+            ],
+            "total_price": total_price
+        })
+
+    except Product.DoesNotExist:
+        return JsonResponse({"success": False, "message": "Товар не знайдено"}, status=404)
+    except Exception as e:
+        return JsonResponse({"success": False, "message": f"Помилка серверу: {str(e)}"}, status=500)
 
 def cart_view(request):
     session_key = request.session.session_key
@@ -223,14 +229,21 @@ def orders_api(request):
     ]
     return JsonResponse({'orders': orders_data})
 
+
 @login_required
 @require_POST
 def cancel_order(request, order_id):
     try:
         order = Order.objects.get(id=order_id, customer__user=request.user)
         if order.status not in ['Завершено', 'Скасовано']:
-            order.status = 'Скасовано'
-            order.save()
+            with transaction.atomic():
+                for item in order.items.all():
+                    item.product.stock += item.quantity
+                    item.product.save()
+
+                order.status = 'Скасовано'
+                order.save()
+
             return JsonResponse({'success': True, 'message': 'Замовлення скасовано.'})
         else:
             return JsonResponse({'success': False, 'message': 'Це замовлення не можна скасувати.'}, status=400)
